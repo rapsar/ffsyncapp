@@ -1,0 +1,240 @@
+body {
+  background-color: #242f3e; /* dark blue-grey background */
+  color: #ffe680; /* yellow text */
+  font-family: "Helvetica Neue", Helvetica, Arial, sans-serif; /* modern sans-serif font */
+  font-size: 16px;
+}
+
+a:any-link {
+  color: inherit !important;
+  text-decoration: underline !important;
+}
+
+
+
+.container {
+  max-width: 800px; /* set the maximum width of the container to 800px */
+  margin: 0 auto; /* center the container */
+}
+
+#chartCanvas {
+  width: 50%; /* set the width of the chart to 50% of the container */
+}
+
+/* #processedCanvas {
+  display: block;
+  margin: auto;
+  width: 25%;
+  height: 25%;
+} */
+
+#processedCanvas {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+  pointer-events: none;
+}
+
+#videoContainer {
+  position: relative;
+  /* padding-bottom: 56.25%; */
+  max-height: 100vh;
+}
+
+#videoContainer video {
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
+/* #videoPlayer {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+} */
+
+#videoPlayer {
+  display: block;
+  margin: auto;
+  width: 100%;
+  height: 100%;
+  object-fit: contain;
+}
+
+
+#background {
+  position: fixed;
+  top: 0;
+  left: 0;
+  width: 100%;
+  height: 100%;
+  background-color: rgba(0, 0, 0, 0.5);
+  z-index: -1;
+}
+
+
+
+
+
+
+.chart-container {
+  display: flex;
+  justify-content: center;
+}
+
+h1 {
+  font-size: 36px;
+  font-weight: normal;
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+h2 {
+  font-size: 24px;
+  font-weight: bold;
+  margin-top: 32px;
+  margin-bottom: 16px;
+}
+
+h3 {
+  color: #ffba5c; /* A different shade of yellow-orange */
+  font-size: 1.5em; /* Adjust the font size as needed */
+  font-weight: normal; /* Set the font to not be bold */
+  font-style: italic; /* Set the font to be italic */
+  margin-top: 40px; /* Add space at the top of each h3 element */
+  margin-bottom: 10px; /* Adjust space at the bottom if needed */
+}
+
+
+
+p {
+  margin-top: 0;
+  margin-bottom: 16px;
+}
+
+.content-wrapper {
+  border: 3px solid #1c2331;
+  background-color: #333f4e;
+  padding: 10px;
+  border-radius: 10px;
+  max-width: 90%;
+  margin: auto;
+}
+
+
+
+
+
+
+
+
+
+
+
+
+label {
+  display: block;
+  margin-bottom: 8px;
+}
+
+#uploadForm {
+  border-radius: 10px;
+  border: 2px solid #ffe680;
+  background-color: #333f4e;
+  padding: 1rem;
+  display: inline-block;
+}
+
+
+input[type="file"] {
+  margin-bottom: 16px;
+}
+
+
+button[type="submit"] {
+  background-color: rgb(224, 235, 26);
+  border: none;
+  color: #242f3e;
+  padding: 12px 20px;
+  text-align: center;
+  text-decoration: none;
+  /* display: inline-block; */
+  display: block;
+  margin: auto;
+  font-size: 16px;
+  /* margin: 4px 2px; */
+  cursor: pointer;
+  border-radius: 10px;
+  box-shadow: 0 0 10px rgb(224, 235, 26);
+  transition: box-shadow 0.3s ease-in-out;
+}
+
+button[type="submit"]:hover {
+  box-shadow: 0 0 20px rgb(224, 235, 26);
+}
+
+
+
+.highlight {
+  background-color: yellow;
+}
+
+
+
+
+/* #test-value {
+  background-color: #f1c40f;
+  display: inline-block;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1);
+} */
+
+.wrapper {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  /* text-align: center; */
+}
+
+#test-value {
+  background-color: #ffe680;
+  color: #242f3e;
+  display: inline-block;
+  padding: 10px;
+  border-radius: 5px;
+  box-shadow: 0 0 10px rgba(255, 255, 255, 0.5);
+  transition: box-shadow 0.3s ease;
+  margin-top: 10px;
+}
+
+#test-value:hover {
+  box-shadow: 0 0 15px rgba(255, 255, 255, 0.8);
+}
+
+@media only screen and (max-width: 600px) {
+  body {
+    font-size: 14px;
+  }
+
+  #test-value {
+    padding: 8px;
+  }
+}
+
+footer {
+  font-size: 14px;
+  color: #2c3e50; /* The color of the text in the footer */
+  background-color: #b3a77a; /* A lighter shade of #ffe680 */
+  padding: 2px 2px; /* Padding for top and bottom of the footer */
+  /* position: fixed; /* Keep the footer fixed at the bottom of the page */ */
+  bottom: 0; /* Align the footer to the bottom */
+  width: 100%; /* Make the footer span the full width of the page */
+  /* text-align: center; /* Center the text in the footer */ */
+  margin-top: 50px; /* Add a gap between the text above and the footer */
+}
