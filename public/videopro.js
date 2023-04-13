@@ -708,3 +708,26 @@ links.forEach((link) => {
     highlightTarget(targetId);
   });
 });
+
+// To do:
+// - clean js
+// - make log file (request, origin, save time series, etc.)
+// - add more movies (frontalis, knulli, carolinus)
+// - figure out why time series is random
+// - improve on threshold
+// - add log 10 p
+// - update statistical analysis
+// - add zoomable chart
+// - limit video length
+// -
+// -
+// -
+// -
+// -
+// -
+// -
+// -
+// -
+// -
+// -
+// -

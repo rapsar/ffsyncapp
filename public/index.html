@@ -13,6 +13,16 @@
   <link rel="stylesheet" href="style.css">
   <link rel="shortcut icon" type="image/x-icon" href="favicon.ico">
 
+  <!-- Google tag (gtag.js) -->
+  <script async src="https://www.googletagmanager.com/gtag/js?id=G-W5R95EVDK2"></script>
+  <script>
+  window.dataLayer = window.dataLayer || [];
+  function gtag(){dataLayer.push(arguments);}
+  gtag('js', new Date());
+
+  gtag('config', 'G-W5R95EVDK2');
+  </script>
+
 
 </head>
 
@@ -169,12 +179,24 @@
     To do this accurately, we need a statistical model and math to implement it.
     More details below.
   </p>
-
-  <h3 id="clip-details"> How to record a clip to analyze on this app? </h3>
   <p>
-    Recording fireflies is tricky because their light is very dim.
-    However, even modern phone cameras can pick up flashes under the right conditions.
-    For best recordings, make sure to be close enough, to increase the light sensitivity (if possible), to avoid light pollution in the background, and to keep your phone as steady as possible.
+    And of course we need data, in the form of a video recording of the collective display.
+  </p>
+
+  <h3 id="clip-details"> How to record a video to analyze on this app? </h3>
+  <p>
+    Recording firefly flashes is tricky because their bioluminescence is very dim.
+    However, modern phone cameras can capture flashes under the right conditions.
+    For best recordings,
+    make sure to be close enough,
+    to increase the camera's light sensitivity (if possible),
+    to avoid light pollution in the background,
+    and to keep your phone steady.
+  </p>
+  <p>
+    It's possible that your recording will look totally dark with no blinks.
+    But flashes might still be there.
+    To check, upload your clip below, and select a low brightness threshold (say, 10).
   </p>
 
   <h3 id ="app-details"> What exactly does this app do? </h3>
@@ -196,7 +218,7 @@
   <h3 id="stat-details"> How does the statistical analysis work? </h3>
   <p>
     The null hypothesis proposes that firefly flashes are uncorrelated.
-    One way to frame this idea into a statistical model is to consider that teh number of flashes per frame follows a Poisson distribution.
+    One way to frame this idea into a statistical model is to consider that the number of flashes per frame follows a Poisson distribution.
     For a Poisson distribution, the mean number of flashes is equal to its variance, which is essentially a measure of the fluctuations around the mean.
   </p>
   <p>
