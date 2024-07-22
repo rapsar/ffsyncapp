@@ -1,267 +1,282 @@
 <!DOCTYPE html>
 <html lang="en">
+
 <head>
-  
-  <!-- Google tag (gtag.js) -->
-  <script async src="https://www.googletagmanager.com/gtag/js?id=G-W5R95EVDK2"></script>
-  <script>
-  window.dataLayer = window.dataLayer || [];
-  function gtag(){dataLayer.push(arguments);}
-  gtag('js', new Date());
+    <!-- Google tag (gtag.js) -->
+    <script async src="https://www.googletagmanager.com/gtag/js?id=G-W5R95EVDK2"></script>
+    <script>
+        window.dataLayer = window.dataLayer || [];
+        function gtag() {dataLayer.push(arguments);}
+        gtag('js', new Date());
 
-  gtag('config', 'G-W5R95EVDK2');
-  </script>
-  
-  <meta charset="UTF-8">
-  <meta name="viewport" content="width=device-width, initial-scale=1.0">
-  <title>Firefly Sync App</title>
+        gtag('config', 'G-W5R95EVDK2');
+    </script>
 
-  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-  <script src="https://cdn.jsdelivr.net/npm/image-js@latest"></script>
-  <script async src="https://docs.opencv.org/master/opencv.js"></script>
-  <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/9.5.0/math.js"></script>
-
-  <link rel="stylesheet" href="style.css">
-  
-  <!-- favicons -->
-  <!-- For Android Chrome -->
-  <link rel="icon" type="image/png" sizes="192x192" href="ico/android-chrome-192x192.png">
-  <link rel="icon" type="image/png" sizes="512x512" href="ico/android-chrome-512x512.png">
-  <!-- For Apple devices -->
-  <link rel="apple-touch-icon" sizes="180x180" href="ico/apple-touch-icon.png">
-  <!-- For other devices and browsers -->
-  <link rel="icon" type="image/png" sizes="16x16" href="ico/favicon-16x16.png">
-  <link rel="icon" type="image/png" sizes="32x32" href="ico/favicon-32x32.png">
-  <!-- For Internet Explorer and legacy browsers -->
-  <link rel="shortcut icon" href="ico/favicon.ico">
-  <!-- Web App Manifest -->
-  <link rel="manifest" href="ico/site.webmanifest">
-
-
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>do these fireflies blink in sync?</title>
+    <script async src="https://docs.opencv.org/master/opencv.js" type="text/javascript"></script>
+    <script src="https://cdn.jsdelivr.net/npm/onnxruntime-web/dist/ort.min.js"></script>
+    <script src="https://cdnjs.cloudflare.com/ajax/libs/mathjs/11.8.0/math.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script src="fireflies.js" defer></script>
+    <script src="videoAnalysis.js" defer></script>
+    <script src="requests.js" defer></script>
+    <script src="timeSeries.js" defer></script>
+    <script src="common.js" defer></script>
+    <link rel="stylesheet" href="style.css">
 </head>
 
-
 <body>
-
-  <!-- scrolls to top of page -->
-  <script>
-    window.location.hash = '#top-page';
-  </script>
-
-  <h1 id="top-page"> Do these fireflies blink in sync?</h1>
-
-  <p>
-    Some fireflies synchronize their flashes when swarming in large groups. <br>
-    To test whether your recorded fireflies blink in sync, upload a short video below.
-  </p>
-  <p>
-    This app tracks the number of flashes in each frame and applies statistical analysis to estimate whether they are synchronous.
-    <a href="#app-details" class="section-link" data-target="#app-details">See below for more details.</a>
-  </p>
-
-  <div style="height: 30px;"></div>
-
-
-
-  <form id="uploadForm" style="border: 3px solid #1c2331; padding: 1rem; display: inline-block;">
-
-    <div style="margin-bottom: 1rem;">
-      <p> Select your own clip: </p>
-      <input type="file" id="user-movie" accept="video/*">
-      <!-- <label for="user-movie">Select a movie from your computer</label> -->
+    <h1>Do these fireflies blink in sync?</h1>
+    <div class="intro-text">
+        <p>
+            Some fireflies synchronize their flashes when swarming in large groups.
+            To test whether your recorded fireflies blink in sync, upload a short video.
+        </p>
+        <p>
+            This app tracks the number of flashes in each frame and applies statistical analysis to estimate whether
+            they are synchronous.
+        </p>
+        <a href="#faq" class="faq-link">more details</a>
+    </div>
+    <div id="upload-container">
+        <div id="initial-buttons">
+            <label for="video-upload" class="custom-file-upload">
+                Choose Your Own Video
+            </label>
+            <input type="file" id="video-upload" accept="video/*">
+            <p class="or-text">or try a sample clip:</p>
+            <div class="sample-videos">
+                <button onclick="loadPresetVideo('TN')">TN</button>
+                <button onclick="loadPresetVideo('KY')">KY</button>
+            </div>
+        </div>
+        <div id="processing-buttons" style="display: none;">
+            <button onclick="analyzeVideo()">Start Processing</button>
+            <button id="stop-button" onclick="stopAnalysis()">Stop Processing</button>
+        </div>
+    </div>
+    <div id="video-container">
+        <canvas id="video-canvas"></canvas>
+        <div id="conclusion-container" class="firefly-conclusion">
+            <p>Based on statistical analysis, this collective flashing display is</p>
+            <div class="sync-status">
+                <span id="likely" class="status-option">likely</span>
+                <span id="unlikely" class="status-option">unlikely</span>
+            </div>
+            <p>to be synchronous</p>
+            <div class="details">
+                <p>Flashes per frame statistics:</p>
+                <ul>
+                    <li>Mean: <span id="mean-nf"></span></li>
+                    <li>Variance: <span id="variance-nf"></span></li>
+                    <li>Z-value: <span id="z-value"></span></li>
+                </ul>
+            </div>
+        </div>
+    </div>
+    <div id="progress-container">
+        <div id="progress-bar"></div>
+    </div>
+    <div id="chart-container">
+        <canvas id="flash-chart"></canvas>
     </div>
 
-    <div style="margin-bottom: 1rem;">
-      <p> Or try with an example: </p>
-      <button type="button" id="test-movie-ky">Kentucky (sync)</button>
-      <div style="height: 4px;"></div>
-      <button type="button" id="test-movie-tn">Tennessee (not sync)</button>
+    <div id="faq">
+        <h2>Frequently Asked Questions</h2>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">What are synchronous fireflies?</div>
+            <div class="faq-answer">Synchronous fireflies tend to all blink together on the same beat. In contrast, most
+                fireflies flash on their own time, with no coordination with their peers.</div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">Which fireflies are known to synchronize?</div>
+            <div class="faq-answer">
+                Only a few species have been documented to flash in sync.
+                In North America,
+                <a href="https://bioone.org/journals/florida-entomologist/volume-93/issue-2/024.093.0210/Natural-History-and-Flash-Repertoire-of-the-Synchronous-Firefly-Photinus/10.1653/024.093.0210.full"
+                    target="_blank"><i>Photinus carolinus</i></a>
+                and
+                <a href="https://theconversation.com/synchrony-with-chaos-blinking-lights-of-a-firefly-swarm-embody-in-nature-what-mathematics-predicted-193984"
+                    target="_blank"><i>Photuris frontalis</i></a>
+                (eastern US), as well as
+                <a href="https://explorer.natureserve.org/Taxon/ELEMENT_GLOBAL.2.1147018/Photinus_knulli"
+                    target="_blank">
+                    <i>Photinus knulli</i>
+                </a>
+                (southern Arizona) are known to synchronize. Another famous species is <i>Pteroptyx malaccae</i>, in
+                southeastern Asia. There might be other species capable of synchrony, but evidence is lacking. That's
+                because identifying synchrony is difficult and requires
+                <a href="#sync-conditions" class="section-link" data-target="#sync-conditions">specific conditions
+                </a>.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">What are the conditions to observe synchrony?</div>
+            <div class="faq-answer">Firefly synchrony usually <a
+                    href="https://www.nytimes.com/2021/07/07/science/fireflies-sync-flashes.html"
+                    target="_blank">requires a high density of active fireflies</a>.
+                That's because if they are too far apart, they are not able to interact to coordinate their flashes.
+                You also need to be at the right place at the right time: watch the right species during the short
+                season of its emergence.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">
+                What is the function of synchrony?
+            </div>
+            <div class="faq-answer">
+                The exact function of firefly synchrony remains a scientific puzzle.
+                Firefly flashes are part of a courtship dialog between advertising males and receptive females.
+                Some males possibly synchronize in order to help females identify them
+                <a href="https://www.science.org/doi/10.1126/science.1190421" target="_blank">(minimize visual clutter
+                    from others)</a>.
+                Other ecological functions
+                <a href="https://www.journals.uchicago.edu/doi/epdf/10.1086/283648" target="_blank">have been
+                    proposed</a>,
+                but not tested.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">
+                Is synchony always the same?
+            </div>
+            <div class="faq-answer">
+                There are actually various patterns of synchrony.
+                Some are more precise than others.
+                Some exhibit secondary modulations.
+                You can find more information <a href="https://rapsar.github.io/patterns" target="_blank">on this
+                    page</a>.
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">
+                How to tell if a collective flashing display is synchronous?
+            </div>
+            <div class="faq-answer">
+                <p>
+                    Simple question, yet hard to answer.
+                    Indeed, take a minute to think about it:
+                    how would you design a test that could give you a 'random' or 'synchronous' verdict based on a video
+                    of flashes?
+                    Below is my approach.
+                </p>
+                <p>
+                    Synchrony means that flashes tend to occur at the same time.
+                    However, several flashes can happen at the same time merely by accident.
+                    So a better definition would be to say that concurrent flashes are <i>more frequent</i> than they
+                    would be <i>if they were independent</i>.
+                </p>
+                <p>
+                    The hypothesis that flashes are independent is called the "null hypothesis".
+                    Based on the data at hands (here, the number of flashes per frame), we can test whether the null
+                    hypothesis is likely or not.
+                    To do this accurately, we need a statistical model and math to implement it.
+                    More details below.
+                </p>
+                <p>
+                    And of course we need data, in the form of a video recording of the collective display.
+                </p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">
+                How to record a video to analyze on this app?
+            </div>
+            <div class="faq-answer">
+                <p>
+                    Recording firefly flashes is tricky because their bioluminescence is very dim.
+                    However, modern phone cameras can capture flashes under the right conditions.
+                    For best recordings,
+                    make sure to be close enough,
+                    to increase the camera's light sensitivity (if possible),
+                    to avoid light pollution in the background,
+                    and to keep your phone steady.
+                </p>
+                <p>
+                    It's possible that your recording will look totally dark with no blinks.
+                    But flashes might still be there.
+                    To check, upload your clip below, and select a low brightness threshold (say, 10).
+                </p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">
+                What exactly does this app do?
+            </div>
+            <div class="faq-answer">
+                <p>
+                    This app analyzes short video recordings of fireflies flashes.
+                    Specifically, it does two things: <br>
+                    1) it locates flashes in each frame of the video; <br>
+                    2) it applies a statistical test to determine whether the collective display is likely to be
+                    synchronized.
+                </p>
+                <p>
+                    To locate flashes in an image, it simply looks for bright spots on a dark background.
+                    You can change how bright the spots have to be by changing the threshold value on the slider above.
+                </p>
+                <p>
+                    Based on the statistics of the number of flashes per frame, it calculates a likelihood that they may
+                    be synchronized.
+                    The details of this analysis are below.
+                </p>
+            </div>
+        </div>
+
+        <div class="faq-item">
+            <div class="faq-question" onclick="toggleAnswer(this)">
+                How does the statistical analysis work?
+            </div>
+            <div class="faq-answer">
+                <p>
+                    The null hypothesis proposes that firefly flashes are uncorrelated.
+                    One way to frame this idea into a statistical model is to consider that the number of flashes per
+                    frame follows a Poisson distribution.
+                    For a Poisson distribution, the mean number of flashes is equal to its variance, which is
+                    essentially a measure of the fluctuations around the mean.
+                </p>
+                <p>
+                    Thus, the app calculates both the mean and the variance.
+                    If they are too far apart, the null hypothesis is rejected, and the display is likely to be
+                    synchronous.
+                </p>
+                <p>
+                    But how far apart should the mean and variance be for the difference to be significant?
+                    There are various ways to interpret the difference.
+                    Here, I use a parameter called the Z-value, based on a list of tests proposed
+                    <a href="https://www.journals.ac.za/sasj/article/view/4991" target="_blank">in this paper</a>.
+                    The Z-value should typically be between -2 and 2 for a process described by a Poisson distribution.
+                    When it is beyond these boundaries, the app returns "likely synchronous".
+                </p>
+                <p>
+                    Further details and explanations can be found in
+                    <a href="https://royalsocietypublishing.org/doi/full/10.1098/rsif.2022.0007" target="_blank">our
+                        paper on <i>Photinus knulli</i></a>.
+                </p>
+            </div>
+        </div>
+
     </div>
 
-    <div style="margin-bottom: 1rem;">
-      <label for="thresholdSlider">Adjust the flash brightness <br> detection threshold (optional)</label>
-      <input type="range" min="0" max="255" value="30" class="slider" id="thresholdSlider">
-      <span id="thresholdValue">30</span>
-    </div>
+    <footer class="site-footer">
+        <div class="footer-content">
+            <p>Created by Raphael Sarfati, PhD</p>
+            <a href="mailto:raphael.sarfati@gmail.com" class="footer-link">raphael.sarfati@aya.yale.edu</a>
+        </div>
+    </footer>
 
-    <!-- <p> Start processing: </p> -->
-    <div>
-      <button type="submit" id="submit-btn">process</button>
-    </div>
-
-  </form>
-
-
-
-  <div style="height: 50px;"></div>
-
-  <video id="uploadedVideo" style="display:none;"></video>
-  <canvas id="videoCanvas" style="display:none;"></canvas>
-  <canvas id="chartCanvas"></canvas>
-
-  <canvas id="processedCanvas"></canvas>
-  <!-- <div id="overlay"></div> -->
-
-
-  <script src="videopro.js"></script>
-
-  <div style="height: 30px;"></div>
-
-  <div class="content-wrapper">
-    <p> Based on statistical analysis, this collective flashing display is </p>
-    <div class="wrapper">
-      <h3 id="test-value">
-        <span style="font-size: small; font-style: italic;">(waiting for processing...)</span>
-      </h3>
-    </div>
-
-    <div style="height: 10px;"></div>
-
-    <p> Details &mdash; flashes per frame statistics: <br>
-      mean: <span id="mean-nf"></span> <br>
-      variance: <span id="variance-nf"></span> <br>
-      Z-value: <span id="z-value"></span>
-    </p>
-  </div>
-
-  <div style="height: 30px;"></div>
-
-  <h2> Frequently Asked Questions </h2>
-
-  <h3> What are synchronous fireflies? </h3>
-  <p>
-    Synchronous fireflies (or "lightning bugs") tend to all blink together on the same beat.
-    In contrast, most fireflies flash on their own time, with no coordination with their peers.
-  </p>
-
-  <h3> Which fireflies are known to synchronize? </h3>
-  <p>
-    Only a few species have been documented to flash in sync.
-    In North America,
-    <a href="https://bioone.org/journals/florida-entomologist/volume-93/issue-2/024.093.0210/Natural-History-and-Flash-Repertoire-of-the-Synchronous-Firefly-Photinus/10.1653/024.093.0210.full" target="_blank"><i>Photinus carolinus</i></a>
-    and
-    <a href="https://theconversation.com/synchrony-with-chaos-blinking-lights-of-a-firefly-swarm-embody-in-nature-what-mathematics-predicted-193984" target="_blank"><i>Photuris frontalis</i><a>
-    (eastern US),
-    as well as
-    <a href="https://explorer.natureserve.org/Taxon/ELEMENT_GLOBAL.2.1147018/Photinus_knulli" target="_blank"> <i>Photinus knulli</i></a>
-    (southern Arizona) are known to synchronize.
-    Another famous species is <i>Pteroptyx malaccae</i>, in southeastern Asia.
-    There might be other species capable of synchrony, but evidence is lacking.
-    That's because identifying synchrony is difficult and requires <a href="#sync-conditions" class="section-link" data-target="#sync-conditions">specific conditions</a>.
-
-  <h3 id="sync-conditions"> What are the conditions to observe synchrony? </h3>
-  <p>
-    Firefly synchrony usually <a href="https://www.nytimes.com/2021/07/07/science/fireflies-sync-flashes.html" target="_blank">requires a high density of active fireflies</a>.
-    That's because if they are too far apart, they are not able to interact to coordinate their flashes.
-    You also need to be at the right place at the right time: watch the right species during the short season of its emergence.
-  </p>
-
-  <h3 id="sync-function"> What is the function of synchrony? </h3>
-  <p>
-    The exact function of firefly synchrony remains a scientific puzzle.
-    Firefly flashes are part of a courtship dialog between advertising males and receptive females.
-    Some males possibly synchronize in order to help females identify them
-    <a href="https://www.science.org/doi/10.1126/science.1190421" target="_blank">(minimize visual clutter from others)</a>.
-    Other ecological functions
-    <a href="https://www.journals.uchicago.edu/doi/epdf/10.1086/283648" target="_blank">have been proposed</a>,
-    but not tested.
-  </p>
-
-  <h3 id="sync-variations"> Is synchony always the same? </h3>
-  <p>
-    There are actually various patterns of synchrony.
-    Some are more precise than others.
-    Some exhibit secondary modulations.
-    You can find more information <a href="https://rapsar.github.io/patterns" target="_blank">on this page</a>.
-  </p>
-
-  <h3> How to tell if a collective flashing display is synchronous? </h3>
-  <p>
-    Simple question, yet hard to answer.
-    Indeed, take a minute to think about it:
-    how would you design a test that could give you a 'random' or 'synchronous' verdict based on a video of flashes?
-    Below is my approach.
-  </p>
-  <p>
-    Synchrony means that flashes tend to occur at the same time.
-    However, several flashes can happen at the same time merely by accident.
-    So a better definition would be to say that concurrent flashes are <i>more frequent</i> than they would be <i>if they were independent</i>.
-  </p>
-  <p>
-    The hypothesis that flashes are independent is called the "null hypothesis".
-    Based on the data at hands (here, the number of flashes per frame), we can test whether the null hypothesis is likely or not.
-    To do this accurately, we need a statistical model and math to implement it.
-    More details below.
-  </p>
-  <p>
-    And of course we need data, in the form of a video recording of the collective display.
-  </p>
-
-  <h3 id="clip-details"> How to record a video to analyze on this app? </h3>
-  <p>
-    Recording firefly flashes is tricky because their bioluminescence is very dim.
-    However, modern phone cameras can capture flashes under the right conditions.
-    For best recordings,
-    make sure to be close enough,
-    to increase the camera's light sensitivity (if possible),
-    to avoid light pollution in the background,
-    and to keep your phone steady.
-  </p>
-  <p>
-    It's possible that your recording will look totally dark with no blinks.
-    But flashes might still be there.
-    To check, upload your clip below, and select a low brightness threshold (say, 10).
-  </p>
-
-  <h3 id ="app-details"> What exactly does this app do? </h3>
-  <p>
-    This app analyzes short video recordings of fireflies flashes.
-    Specifically, it does two things: <br>
-    1) it locates flashes in each frame of the video; <br>
-    2) it applies a statistical test to determine whether the collective display is likely to be synchronized.
-  </p>
-  <p>
-    To locate flashes in an image, it simply looks for bright spots on a dark background.
-    You can change how bright the spots have to be by changing the threshold value on the slider above.
-  </p>
-  <p>
-    Based on the statistics of the number of flashes per frame, it calculates a likelihood that they may be synchronized.
-    The details of this analysis are below.
-  </p>
-
-  <h3 id="stat-details"> How does the statistical analysis work? </h3>
-  <p>
-    The null hypothesis proposes that firefly flashes are uncorrelated.
-    One way to frame this idea into a statistical model is to consider that the number of flashes per frame follows a Poisson distribution.
-    For a Poisson distribution, the mean number of flashes is equal to its variance, which is essentially a measure of the fluctuations around the mean.
-  </p>
-  <p>
-    Thus, the app calculates both the mean and the variance.
-    If they are too far apart, the null hypothesis is rejected, and the display is likely to be synchronous.
-  </p>
-  <p>
-    But how far apart should the mean and variance be for the difference to be significant?
-    There are various ways to interpret the difference.
-    Here, I use a parameter called the Z-value, based on a list of tests proposed
-    <a href="https://www.journals.ac.za/sasj/article/view/4991" target="_blank">in this paper</a>.
-    The Z-value should typically be between -2 and 2 for a process described by a Poisson distribution.
-    When it is beyond these boundaries, the app returns "likely synchronous".
-  </p>
-  <p>
-    Further details and explanations can be found in
-    <a href="https://royalsocietypublishing.org/doi/full/10.1098/rsif.2022.0007" target="_blank">our paper on <i>Photinus knulli</i></a>.
-  </p>
-
-
-  <div style="height: 100px;"></div>
-  <footer>
-    <p>
-      &nbsp; &nbsp; by Rapha&euml;l Sarfati, PhD &mdash; fireflyer | explorer | scientist <br>
-      &nbsp; &nbsp; &nbsp; &nbsp; <a href="mailto:raphael.sarfati@aya.yale.edu">raphael.sarfati@aya.yale.edu</a> <br>
-      &nbsp; &nbsp; &nbsp; &nbsp; <a href="https://lucidluminescence.org" target="_blank">lucidluminescence.org</a>
-    </p>
-  </footer>
 
 
 </body>
+
 </html>
