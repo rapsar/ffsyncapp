@@ -1,4 +1,0 @@
-runtime: nodejs14
-env: standard
-
-entrypoint: node server.js
