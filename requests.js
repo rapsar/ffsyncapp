@@ -16,7 +16,9 @@ function loadPresetVideo(preset) {
     }
 
     const video = document.createElement('video');
+    video.crossOrigin = 'anonymous'; // Add this line
     video.src = currentVideo;
+    video.preload = 'auto';
     video.playsInline = true;
     video.muted = true;
     video.onloadedmetadata = () => {
