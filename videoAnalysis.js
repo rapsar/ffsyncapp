@@ -1,13 +1,12 @@
 let chart;
 let shouldStopAnalysis = false;
-//let currentVideo;
 let ffnet;
 let videoProcessor;
 
-// Load the ONNX model
-async function loadModel() {
-    ffnet = await ort.InferenceSession.create('ffnet.onnx');
-}
+// // Load the ONNX model
+// async function loadModel() {
+//     ffnet = await ort.InferenceSession.create('ffnet.onnx');
+// }
 
 class VideoProcessor {
     constructor(video, canvas, ctx) {
@@ -91,23 +90,24 @@ class VideoProcessor {
 }
 
 async function analyzeVideo() {
-    const videoFile = document.getElementById('video-upload').files[0];
-    if (!videoFile) {
+    //const videoFile = document.getElementById('video-upload').files[0];
+    if (!currentVideo) {
         alert('Please select a video file first.');
         return;
     }
 
-    // Ensure the model is loaded
-    if (!ffnet) {
-        await loadModel();
-    }
+    // // Ensure the model is loaded
+    // if (!ffnet) {
+    //     await loadModel();
+    // }
 
     document.getElementById('stop-button').style.display = 'inline-block';
 
     const video = document.createElement('video');
     video.muted = true;
     video.playsInline = true;
-    video.src = URL.createObjectURL(videoFile);
+    //video.src = URL.createObjectURL(videoFile);
+    video.src = currentVideo;
 
     await new Promise(resolve => {
         video.onloadedmetadata = () => {
