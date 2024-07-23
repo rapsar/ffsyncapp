@@ -1,3 +1,5 @@
+let currentVideo = null;
+
 function displayFirstFrame(videoElement) {
     const canvas = document.getElementById('video-canvas');
     const ctx = canvas.getContext('2d');
@@ -28,8 +30,11 @@ function loadPresetVideo(preset) {
 document.getElementById('video-upload').addEventListener('change', function(event) {
     const file = event.target.files[0];
     if (file) {
+        currentVideo = URL.createObjectURL(file);
+        
         const video = document.createElement('video');
-        video.src = URL.createObjectURL(file);
+        //video.src = URL.createObjectURL(file);
+        video.src = currentVideo;
         video.onloadedmetadata = () => {
             video.onloadeddata = () => {
                 displayFirstFrame(video);
