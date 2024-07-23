@@ -17,6 +17,8 @@ function loadPresetVideo(preset) {
 
     const video = document.createElement('video');
     video.src = currentVideo;
+    video.playsInline = true;
+    video.muted = true;
     video.onloadedmetadata = () => {
         video.onloadeddata = () => {
             displayFirstFrame(video);
