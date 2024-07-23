@@ -296,7 +296,7 @@ function calculateZ(numberFlashes) {
     const m = math.mean(numberFlashes);
     const s = math.std(numberFlashes);
     const n = numberFlashes.length;
-    const Z = (s * s - m) * Math.sqrt(n - 1) / Math.sqrt(2 * n * m * (n * m - 1));
+    const Z = (s * s - m) * n * Math.sqrt(n - 1) / Math.sqrt(2 * n * m * (n * m - 1));
     return Z;
 }
 
