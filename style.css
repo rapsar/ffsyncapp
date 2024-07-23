@@ -1,6 +1,6 @@
 body {
   font-family: Arial, sans-serif;
-  max-width: 100%;
+  max-width: 800px;
   margin: 0 auto;
   padding: 20px;
   text-align: center;
@@ -11,7 +11,7 @@ body {
   min-height: 100vh;
 }
 
-body > *:not(.site-footer) {
+body>*:not(.site-footer) {
   flex: 1 0 auto;
 }
 
@@ -38,7 +38,7 @@ h1 {
 }
 
 .intro-text {
-  max-width: 100%;
+  max-width: 600px;
   margin: 0 auto 40px;
   line-height: 1.6;
   font-size: 1.1em;
@@ -84,7 +84,7 @@ button {
   border-radius: 5px;
   transition: all 0.3s ease;
   font-size: 1.1em;
-  margin: 5px;
+  margin: 0 5px;
 }
 
 .custom-file-upload {
@@ -110,12 +110,10 @@ button:hover {
 #video-container {
   position: relative;
   display: inline-block;
-  max-width: 100%;
 }
 
 #video-canvas {
   max-width: 100%;
-  height: auto;
 }
 
 input[type="file"] {
@@ -311,47 +309,6 @@ input[type="file"] {
 }
 
 .footer-content {
-  max-width: 100%;
+  max-width: 600px;
   margin: 0 auto;
-}
-
-/* Media queries for responsive design */
-@media screen and (max-width: 768px) {
-  body {
-    padding: 10px;
-  }
-
-  h1 {
-    font-size: 2em;
-  }
-
-  .custom-file-upload,
-  button {
-    display: block;
-    width: 100%;
-    margin: 10px 0;
-  }
-
-  .status-option {
-    display: block;
-    margin: 5px 0;
-  }
-
-  .firefly-conclusion {
-    width: 90%;
-  }
-}
-
-@media screen and (max-width: 480px) {
-  h1 {
-    font-size: 1.8em;
-  }
-
-  .intro-text,
-  #faq,
-  #video-container,
-  #chart-container,
-  .site-footer {
-    padding: 15px;
-  }
 }
